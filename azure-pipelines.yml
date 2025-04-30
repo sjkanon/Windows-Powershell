@@ -1,0 +1,29 @@
+trigger: none
+
+jobs:
+- job: TestAgentCDN
+  pool:
+    name: SelfHostedVoxAgents  # <-- CHANGE this to the name of one of your pools
+  steps:
+  - task: PowerShell@2
+    displayName: 'Test download.agent.dev.azure.com access'
+    inputs:
+      targetType: inline
+      script: |
+        $ErrorActionPreference = 'Stop'
+        [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+        try {
+          $response = Invoke-WebRequest -Method HEAD `
+            -Uri https://download.agent.dev.azure.com/agent/4.252.0/vsts-agent-win-x64-4.252.0.zip `
+            -TimeoutSec 5 `
+            -UseBasicParsing
+
+          if ($response.StatusCode -lt 400) {
+            Write-Host "✅ SUCCESS: Agent CDN is accessible. Status: $($response.StatusCode)"
+          } else {
+            throw "Unexpected status code"
+          }
+        } catch {
+          Write-Host "##vso[task.logissue type=warning]Can't access download.agent.dev.azure.com. Check firewall settings."
+          Write-Error "❌ FAILED: Agent CDN is blocked or unreachable."
+        }
