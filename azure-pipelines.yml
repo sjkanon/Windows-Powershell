@@ -1,29 +1,122 @@
 trigger: none
 
 jobs:
-- job: TestAgentCDN
+- job: Test_BerryPool
+  displayName: 'Test SelfHostedBerryPool'
   pool:
-    name: SelfHostedVoxAgents  # <-- CHANGE this to the name of one of your pools
+    name: SelfHostedBerryPool
   steps:
   - task: PowerShell@2
-    displayName: 'Test download.agent.dev.azure.com access'
+    displayName: 'Test CDN Access'
     inputs:
       targetType: inline
       script: |
-        $ErrorActionPreference = 'Stop'
-        [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+        $url = 'https://download.agent.dev.azure.com/agent/4.252.0/vsts-agent-win-x64-4.252.0.zip'
+        Write-Host "Testing access to $url"
         try {
-          $response = Invoke-WebRequest -Method HEAD `
-            -Uri https://download.agent.dev.azure.com/agent/4.252.0/vsts-agent-win-x64-4.252.0.zip `
-            -TimeoutSec 5 `
-            -UseBasicParsing
-
-          if ($response.StatusCode -lt 400) {
-            Write-Host "✅ SUCCESS: Agent CDN is accessible. Status: $($response.StatusCode)"
-          } else {
-            throw "Unexpected status code"
-          }
+          $response = Invoke-WebRequest -Method HEAD -Uri $url -TimeoutSec 5 -UseBasicParsing
+          Write-Host "✅ Access successful: $($response.StatusCode)"
         } catch {
-          Write-Host "##vso[task.logissue type=warning]Can't access download.agent.dev.azure.com. Check firewall settings."
-          Write-Error "❌ FAILED: Agent CDN is blocked or unreachable."
+          Write-Host "##vso[task.logissue type=warning]CDN not accessible from SelfHostedBerryPool"
+          Write-Error "❌ CDN access failed."
+        }
+
+- job: Test_BerryPoolMK
+  displayName: 'Test SelfHostedBerryPool-MK'
+  pool:
+    name: SelfHostedBerryPool-MK
+  steps:
+  - task: PowerShell@2
+    displayName: 'Test CDN Access'
+    inputs:
+      targetType: inline
+      script: |
+        $url = 'https://download.agent.dev.azure.com/agent/4.252.0/vsts-agent-win-x64-4.252.0.zip'
+        Write-Host "Testing access to $url"
+        try {
+          $response = Invoke-WebRequest -Method HEAD -Uri $url -TimeoutSec 5 -UseBasicParsing
+          Write-Host "✅ Access successful: $($response.StatusCode)"
+        } catch {
+          Write-Host "##vso[task.logissue type=warning]CDN not accessible from SelfHostedBerryPool-MK"
+          Write-Error "❌ CDN access failed."
+        }
+
+- job: Test_PHP8
+  displayName: 'Test SelfHostedPHP8'
+  pool:
+    name: SelfHostedPHP8
+  steps:
+  - task: PowerShell@2
+    displayName: 'Test CDN Access'
+    inputs:
+      targetType: inline
+      script: |
+        $url = 'https://download.agent.dev.azure.com/agent/4.252.0/vsts-agent-win-x64-4.252.0.zip'
+        Write-Host "Testing access to $url"
+        try {
+          $response = Invoke-WebRequest -Method HEAD -Uri $url -TimeoutSec 5 -UseBasicParsing
+          Write-Host "✅ Access successful: $($response.StatusCode)"
+        } catch {
+          Write-Host "##vso[task.logissue type=warning]CDN not accessible from SelfHostedPHP8"
+          Write-Error "❌ CDN access failed."
+        }
+
+- job: Test_VoxAgents
+  displayName: 'Test SelfHostedVoxAgents'
+  pool:
+    name: SelfHostedVoxAgents
+  steps:
+  - task: PowerShell@2
+    displayName: 'Test CDN Access'
+    inputs:
+      targetType: inline
+      script: |
+        $url = 'https://download.agent.dev.azure.com/agent/4.252.0/vsts-agent-win-x64-4.252.0.zip'
+        Write-Host "Testing access to $url"
+        try {
+          $response = Invoke-WebRequest -Method HEAD -Uri $url -TimeoutSec 5 -UseBasicParsing
+          Write-Host "✅ Access successful: $($response.StatusCode)"
+        } catch {
+          Write-Host "##vso[task.logissue type=warning]CDN not accessible from SelfHostedVoxAgents"
+          Write-Error "❌ CDN access failed."
+        }
+
+- job: Test_VoxAgentsProd
+  displayName: 'Test SelfHostedVoxAgentsProd'
+  pool:
+    name: SelfHostedVoxAgentsProd
+  steps:
+  - task: PowerShell@2
+    displayName: 'Test CDN Access'
+    inputs:
+      targetType: inline
+      script: |
+        $url = 'https://download.agent.dev.azure.com/agent/4.252.0/vsts-agent-win-x64-4.252.0.zip'
+        Write-Host "Testing access to $url"
+        try {
+          $response = Invoke-WebRequest -Method HEAD -Uri $url -TimeoutSec 5 -UseBasicParsing
+          Write-Host "✅ Access successful: $($response.StatusCode)"
+        } catch {
+          Write-Host "##vso[task.logissue type=warning]CDN not accessible from SelfHostedVoxAgentsProd"
+          Write-Error "❌ CDN access failed."
+        }
+
+- job: Test_VoxLinuxAgents
+  displayName: 'Test SelfHostedVoxLinuxAgents'
+  pool:
+    name: SelfHostedVoxLinuxAgents
+  steps:
+  - task: PowerShell@2
+    displayName: 'Test CDN Access'
+    inputs:
+      targetType: inline
+      script: |
+        $url = 'https://download.agent.dev.azure.com/agent/4.252.0/vsts-agent-win-x64-4.252.0.zip'
+        Write-Host "Testing access to $url"
+        try {
+          $response = Invoke-WebRequest -Method HEAD -Uri $url -TimeoutSec 5 -UseBasicParsing
+          Write-Host "✅ Access successful: $($response.StatusCode)"
+        } catch {
+          Write-Host "##vso[task.logissue type=warning]CDN not accessible from SelfHostedVoxLinuxAgents"
+          Write-Error "❌ CDN access failed."
         }
