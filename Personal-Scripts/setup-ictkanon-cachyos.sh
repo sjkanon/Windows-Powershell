@@ -109,6 +109,7 @@ clone_repo "ICTKanon"                   "$GIT_DIR/ICTKanon"
 clone_repo "Windows-Powershell"         "$GIT_DIR/Windows-Powershell"
 clone_repo "M365-Scripts"               "$GIT_DIR/M365-Scripts"
 clone_repo "PR-Website"                 "$GIT_DIR/PR-Website"
+clone_repo "Werkbon"                    "$GIT_DIR/Werkbon"
 clone_repo "FirstITHub-Intune-Backups"  "$GIT_DIR/FirstITHub-Intune-Backups"
 
 # Devel branches (aparte map)
