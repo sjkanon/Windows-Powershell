@@ -111,12 +111,14 @@ clone_repo "M365-Scripts"               "$GIT_DIR/M365-Scripts"
 clone_repo "PR-Website"                 "$GIT_DIR/PR-Website"
 clone_repo "Werkbon"                    "$GIT_DIR/Werkbon"
 clone_repo "FirstITHub-Intune-Backups"  "$GIT_DIR/FirstITHub-Intune-Backups"
+clone_repo "Klantenportaal_new"                    "$GIT_DIR/Klantenportaal"
 
 # Devel branches (aparte map)
 clone_repo "Windows-Powershell"         "$DEVEL_DIR/Windows-Powershell"   "devel"
 clone_repo "M365-Scripts"               "$DEVEL_DIR/M365-Scripts"         "devel"
 clone_repo "PR-Website"                 "$DEVEL_DIR/PR-Website"           "development"
-
+clone_repo "Werkbon"                    "$DEVEL_DIR/Werkbon"                "devel"
+clone_repo "Klantenportaal_new"          "$DEVEL_DIR/Klantenportaal"    "devel"
 echo "✅ Repos gecloned."
 echo ""
 
