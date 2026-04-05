@@ -77,7 +77,53 @@ EOF
 echo "✅ settings.json aangemaakt."
 echo ""
 
-# ── 4. GitHub repos clonen ──
+# ── 4. SSH key controleren/aanmaken ──
+echo "🔑 SSH key controleren..."
+
+SSH_KEY="$HOME/.ssh/id_ed25519"
+
+if [ -f "$SSH_KEY" ]; then
+  echo "✅ SSH key gevonden: $SSH_KEY"
+else
+  echo "   Geen SSH key gevonden, aanmaken..."
+  mkdir -p "$HOME/.ssh"
+  chmod 700 "$HOME/.ssh"
+  ssh-keygen -t ed25519 -C "sjoerd@ictkanon.com" -f "$SSH_KEY" -N ""
+  echo "✅ SSH key aangemaakt."
+  echo ""
+  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  echo "⚠️  Voeg de volgende public key toe aan GitHub:"
+  echo "   https://github.com/settings/ssh/new"
+  echo ""
+  cat "${SSH_KEY}.pub"
+  echo ""
+  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  read -rp "   Druk op Enter zodra je de key hebt toegevoegd aan GitHub..."
+  echo ""
+fi
+
+# SSH agent starten en key laden
+eval "$(ssh-agent -s)" > /dev/null
+ssh-add "$SSH_KEY" 2>/dev/null
+echo "   SSH agent gestart en key geladen."
+
+# Verbinding testen
+echo "   GitHub verbinding testen..."
+SSH_TEST=$(ssh -o StrictHostKeyChecking=accept-new -T git@github.com 2>&1 || true)
+if echo "$SSH_TEST" | grep -q "successfully authenticated"; then
+  echo "✅ GitHub SSH verbinding OK"
+else
+  echo "⚠️  GitHub SSH test resultaat: $SSH_TEST"
+  echo "   Controleer of de key correct is toegevoegd en probeer opnieuw."
+  read -rp "   Doorgaan ondanks waarschuwing? (j/n): " CONTINUE
+  if [[ "$CONTINUE" != "j" && "$CONTINUE" != "J" ]]; then
+    echo "❌ Setup afgebroken."
+    exit 1
+  fi
+fi
+echo ""
+
+# ── 5. GitHub repos clonen ──
 echo "📁 GitHub repos clonen..."
 
 GIT_DIR="$HOME/git"
@@ -111,18 +157,19 @@ clone_repo "M365-Scripts"               "$GIT_DIR/M365-Scripts"
 clone_repo "PR-Website"                 "$GIT_DIR/PR-Website"
 clone_repo "Werkbon"                    "$GIT_DIR/Werkbon"
 clone_repo "FirstITHub-Intune-Backups"  "$GIT_DIR/FirstITHub-Intune-Backups"
-clone_repo "Klantenportaal_new"                    "$GIT_DIR/Klantenportaal"
+clone_repo "Klantenportaal_new"         "$GIT_DIR/Klantenportaal"
 
 # Devel branches (aparte map)
-clone_repo "Windows-Powershell"         "$DEVEL_DIR/Windows-Powershell"   "devel"
-clone_repo "M365-Scripts"               "$DEVEL_DIR/M365-Scripts"         "devel"
-clone_repo "PR-Website"                 "$DEVEL_DIR/PR-Website"           "development"
-clone_repo "Werkbon"                    "$DEVEL_DIR/Werkbon"                "devel"
-clone_repo "Klantenportaal_new"          "$DEVEL_DIR/Klantenportaal"    "devel"
+clone_repo "Windows-Powershell"         "$DEVEL_DIR/Windows-Powershell"  "devel"
+clone_repo "M365-Scripts"               "$DEVEL_DIR/M365-Scripts"        "devel"
+clone_repo "PR-Website"                 "$DEVEL_DIR/PR-Website"          "development"
+clone_repo "Werkbon"                    "$DEVEL_DIR/Werkbon"             "devel"
+clone_repo "Klantenportaal_new"         "$DEVEL_DIR/Klantenportaal"      "devel"
+
 echo "✅ Repos gecloned."
 echo ""
 
-# ── 5. Overzicht ──
+# ── 6. Overzicht ──
 echo "============================================"
 echo "✅ Setup voltooid!"
 echo ""
@@ -133,11 +180,19 @@ echo "   ├── ICTKanon"
 echo "   ├── Windows-Powershell      (main)"
 echo "   ├── M365-Scripts            (main)"
 echo "   ├── PR-Website              (main)"
+echo "   ├── Werkbon                 (main)"
 echo "   ├── FirstITHub-Intune-Backups"
+echo "   ├── Klantenportaal          (main)"
 echo "   └── devel/"
 echo "       ├── Windows-Powershell  (devel branch)"
 echo "       ├── M365-Scripts        (devel branch)"
-echo "       └── PR-Website          (development branch)"
+echo "       ├── PR-Website          (development branch)"
+echo "       ├── Werkbon             (devel branch)"
+echo "       └── Klantenportaal      (devel branch)"
+echo ""
+echo "🔑 SSH:"
+echo "   Key: ~/.ssh/id_ed25519"
+echo "   Public key: ~/.ssh/id_ed25519.pub"
 echo ""
 echo "🔧 VS Code:"
 echo "   - GitDoc + GitLens + Git Graph geïnstalleerd"
