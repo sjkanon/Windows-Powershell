@@ -1,0 +1,7 @@
+Windows-Powershell — projectlog
+=================================
+Nieuwste bovenaan. Per wijziging: datum, onderwerp, wat/waarom, bestanden, commit.
+
+2026-10-09 — project.log aangemaakt
+  - Vanaf nu wordt elke wijziging hier gelogd en direct gecommit en gepusht.
+  - Uitgangspunt: 8d8ad4e 2026-09-09 Update repository cloning in setup script
